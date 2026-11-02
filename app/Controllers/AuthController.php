@@ -1,55 +1,60 @@
 <?php
 
-session_start();
+class AuthController
+{
+    private Utilizador $utilizadores;
 
-$erro = '';
+    public function __construct(PDO $pdo)
+    {
+        $this->utilizadores = new Utilizador($pdo);
+    }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
+    public function registo(): void
+    {
+        $mensagem = '';
+        $sucesso  = false;
+        $d = ['username' => '', 'nome' => '', 'email' => ''];
 
-    try {
-        require 'mysqlConnection.php';
-        $stmt = $pdo->prepare('SELECT id, username, password FROM users WHERE username = ?');
-        $stmt->execute([$username]);
-        $user = $stmt->fetch();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $d['username'] = param($_POST, 'username');
+            $d['nome']     = param($_POST, 'nome');
+            $d['email']    = param($_POST, 'email');
+            $password      = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
 
-        if ($user && password_verify($password, $user['password'])) {
-            session_regenerate_id(true);
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            header('Location: home.php');
-            exit;
+            if (strlen($d['username']) < 3 || strlen($d['username']) > 50) {
+                $mensagem = 'O username deve ter entre 3 e 50 caracteres.';
+            } elseif ($d['nome'] === '' || strlen($d['nome']) > 100) {
+                $mensagem = 'Indique o seu nome (máximo 100 caracteres).';
+            } elseif (!filter_var($d['email'], FILTER_VALIDATE_EMAIL) || strlen($d['email']) > 100) {
+                $mensagem = 'Indique um email válido.';
+            } elseif (strlen($password) < 8) {
+                $mensagem = 'A password deve ter pelo menos 8 caracteres.';
+            } else {
+                try {
+                    $this->utilizadores->criarCandidato(
+                        $d['username'],
+                        password_hash($password, PASSWORD_DEFAULT),
+                        $d['nome'],
+                        $d['email']
+                    );
+                    $sucesso  = true;
+                    $mensagem = 'Conta criada com sucesso!';
+                    $d = ['username' => '', 'nome' => '', 'email' => ''];
+                } catch (PDOException $e) {
+                    if ($e->getCode() == 23000) {
+                        $mensagem = 'Este username ou email já existe.';
+                    } else {
+                        throw $e;
+                    }
+                }
+            }
         }
-        $erro = 'Username ou password incorretos.';
-    } catch (PDOException $e) {
-        error_log($e->getMessage());
-        $erro = 'Erro no servidor. Tente mais tarde.';
+
+        render('auth/registo', [
+            'titulo'   => 'Registo',
+            'mensagem' => $mensagem,
+            'sucesso'  => $sucesso,
+            'd'        => $d,
+        ]);
     }
 }
-?>
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main>
-    <h1>Login</h1>
-
-    <?php if ($erro): ?>
-        <p class="erro"><?php echo htmlspecialchars($erro, ENT_QUOTES, 'UTF-8'); ?></p>
-    <?php endif; ?>
-
-    <form method="post">
-        <label>Username <input type="text" name="username" maxlength="50" required></label>
-        <label>Password <input type="password" name="password" required></label>
-        <button type="submit">Entrar</button>
-    </form>
-
-    <p>Ainda não tem conta? <a href="registo.php">Registe-se</a></p>
-</main>
-</body>
-</html>
