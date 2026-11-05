@@ -17,9 +17,9 @@ class AuthController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $d['username'] = param($_POST, 'username');
-            $d['nome']     = param($_POST, 'nome');
-            $d['email']    = param($_POST, 'email');
-            $password      = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
+            $d['nome'] = param($_POST, 'nome');
+            $d['email'] = param($_POST, 'email');
+            $password = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
 
             if (strlen($d['username']) < 3 || strlen($d['username']) > 50) {
                 $mensagem = 'O username deve ter entre 3 e 50 caracteres.';
@@ -51,10 +51,39 @@ class AuthController
         }
 
         render('auth/registo', [
-            'titulo'   => 'Registo',
+            'titulo' => 'Registo',
             'mensagem' => $mensagem,
-            'sucesso'  => $sucesso,
-            'd'        => $d,
+            'sucesso' => $sucesso,
+            'd' => $d,
         ]);
+    }
+
+    public function login()
+    {
+        $erro = '';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $username = param($_POST, 'username');
+            $password = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
+
+            // Procura o utilizador na base de dados
+            $utilizador = $this->utilizadores->porUsername($username);
+
+            // Existe e a password está certa?
+            if ($utilizador && password_verify($password, $utilizador['password_hash'])) {
+                Auth::iniciarLogin($utilizador);
+                redirecionar('inicio');
+            } else {
+                $erro = 'Username ou password incorretos.';
+            }
+        }
+
+        render('auth/login', ['titulo' => 'Login', 'erro' => $erro]);
+    }
+
+    public function logout()
+    {
+        Auth::terminarSessao();
+        redirecionar('login');
     }
 }

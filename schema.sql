@@ -10,5 +10,5 @@ create table utilizadores (
     email varchar(100) not null unique,
     morada varchar(200) null,
     telefone varchar(20)  null,
-    nif char(9) null,
+    nif char(9) null
 );

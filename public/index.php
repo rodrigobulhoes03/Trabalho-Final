@@ -1,39 +1,65 @@
 <?php
-ini_set('display_errors', '1'); // só durante o desenvolvimento
+ini_set('display_errors', '1');
 
+require __DIR__ . '/../app/Auth.php';
 require __DIR__ . '/../app/Models/Utilizador.php';
 require __DIR__ . '/../app/Controllers/AuthController.php';
 
-// Escapa texto para HTML (protege contra XSS)
-function e($valor): string
+function escapar($valor): string
 {
     return htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8');
 }
 
-// Lê um campo de texto do formulário
 function param(array $origem, string $chave): string
 {
-    $v = $origem[$chave] ?? '';
-    return is_string($v) ? trim($v) : '';
+    $valor = $origem[$chave] ?? '';
+
+    if (is_string($valor)) {
+        return trim($valor);
+    }
+
+    return '';
 }
 
-// Mostra uma View dentro do layout
 function render(string $view, array $dados = []): void
 {
     extract($dados);
-    ob_start();
-    require __DIR__ . '/../app/Views/' . $view . '.php';
-    $conteudo = ob_get_clean();
+    $ficheiroView = __DIR__ . '/../app/Views/' . $view . '.php';
     require __DIR__ . '/../app/Views/layout.php';
 }
 
-$rota = $_GET['rota'] ?? 'registo';
+function redirecionar(string $rota): void
+{
+    header('Location: index.php?rota=' . $rota);
+    exit;
+}
+
+Auth::iniciarSessao();
+
+$rota = $_GET['rota'] ?? 'login';
 $pdo  = require __DIR__ . '/../config.php';
+$auth = new AuthController($pdo);
 
 switch ($rota) {
     case 'registo':
-        (new AuthController($pdo))->registo();
+        $auth->registo();
         break;
+
+    case 'login':
+        $auth->login();
+        break;
+
+    case 'logout':
+        $auth->logout();
+        break;
+
+    case 'inicio':
+        if (!Auth::autenticado()) {
+            redirecionar('login');
+        }
+        render('auth/inicio', ['titulo' => 'Início']);
+        break;
+
     default:
         http_response_code(404);
         echo 'Página não encontrada.';

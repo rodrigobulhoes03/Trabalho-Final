@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= e($titulo ?? 'Bolsas') ?></title>
+    <title><?= escapar($titulo ?? 'Bolsas') ?></title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main>
-    <?= $conteudo ?>
+    <?php if (isset($ficheiroView)) require $ficheiroView; ?>
 </main>
 
 </body>
