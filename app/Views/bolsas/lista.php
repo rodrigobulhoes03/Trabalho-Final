@@ -1,6 +1,6 @@
 <h1>Bolsas e apoios disponíveis</h1>
 
-<form method="get" action="index.php">
+<form method="get" action="index.php" class="pesquisa">
     <input type="hidden" name="rota" value="bolsas">
     <label>Pesquisar (designação, tipo de apoio ou área de estudo)
         <input type="text" name="pesquisa" maxlength="100" value="<?= escapar($pesquisa) ?>">

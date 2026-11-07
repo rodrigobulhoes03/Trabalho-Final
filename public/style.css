@@ -13,6 +13,7 @@ body {
     font-family: "Segoe UI", Tahoma, sans-serif;
 }
 
+/* Cartão: estreito por omissão (login, registo) */
 main {
     width: min(100%, 420px);
     padding: 36px;
@@ -20,6 +21,12 @@ main {
     border-radius: 8px;
     background: #fff;
     box-shadow: 0 18px 48px rgba(32, 49, 47, 0.1);
+}
+
+/* Cartão largo (lista de bolsas) */
+main.largo {
+    width: min(100%, 1100px);
+    overflow-x: auto;
 }
 
 h1 {
@@ -77,22 +84,92 @@ a {
     font-weight: 600;
 }
 
-main {
-    width: 100%;
+/* Menu */
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #d7e1dc;
 }
 
+nav form {
+    margin: 0;
+}
+
+nav button {
+    min-height: 0;
+    margin: 0;
+    padding: 6px 14px;
+}
+
+nav span {
+    margin-left: auto;
+    font-size: 14px;
+}
+
+/* Pesquisa: caixa e botão na mesma linha */
+.pesquisa {
+    display: flex;
+    gap: 10px;
+    align-items: end;
+}
+
+.pesquisa label {
+    flex: 1;
+    margin-top: 0;
+}
+
+.pesquisa button {
+    margin-top: 0;
+    padding: 0 28px;
+}
+
+/* Tabela */
 table {
     width: 100%;
-    border-collapse: collapse;
     margin-top: 26px;
+    border-collapse: collapse;
 }
 
 th, td {
-    padding: 12px 10px;
+    padding: 14px 12px;
     border-bottom: 1px solid #d7e1dc;
     text-align: left;
 }
 
 th {
+    background: #eaf3f1;
     color: #173f3a;
+    font-size: 14px;
+}
+
+tr:hover td {
+    background: #f6faf8;
+}
+
+/* Montante à direita e prazo sem quebrar linha */
+th:nth-child(4), td:nth-child(4) {
+    text-align: right;
+    white-space: nowrap;
+}
+
+td:nth-child(5) {
+    white-space: nowrap;
+}
+
+/* Link "Detalhes" com aspeto de botão */
+td a {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid #17675d;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+td a:hover {
+    background: #17675d;
+    color: #fff;
 }

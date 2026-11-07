@@ -35,9 +35,9 @@ class BolsaController
 
         $pesquisa = param($_GET, 'pesquisa');
 
-        render('bolsas/detalhe', [
-            'titulo' => $bolsa['designacao'],
-            'bolsa'  => $bolsa,
+            render('bolsas/lista', [
+            'titulo'   => 'Bolsas e apoios',
+            'bolsas'   => $this->bolsas->listar($pesquisa),
             'pesquisa' => $pesquisa,
             'largo'    => true,
         ]);

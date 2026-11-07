@@ -38,7 +38,7 @@ function redirecionar(string $rota): void
 
 Auth::iniciarSessao();
 
-$rota = $_GET['rota'] ?? 'login';
+$rota = $_GET['rota'] ?? 'bolsas';
 $pdo  = require __DIR__ . '/../config.php';
 $auth = new AuthController($pdo);
 $bolsa = new BolsaController($pdo);                              // NOVO
