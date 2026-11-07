@@ -3,7 +3,9 @@ ini_set('display_errors', '1');
 
 require __DIR__ . '/../app/Auth.php';
 require __DIR__ . '/../app/Models/Utilizador.php';
+require __DIR__ . '/../app/Models/Bolsa.php';                    // NOVO
 require __DIR__ . '/../app/Controllers/AuthController.php';
+require __DIR__ . '/../app/Controllers/BolsaController.php';     // NOVO
 
 function escapar($valor): string
 {
@@ -39,6 +41,7 @@ Auth::iniciarSessao();
 $rota = $_GET['rota'] ?? 'login';
 $pdo  = require __DIR__ . '/../config.php';
 $auth = new AuthController($pdo);
+$bolsa = new BolsaController($pdo);                              // NOVO
 
 switch ($rota) {
     case 'registo':
@@ -58,6 +61,14 @@ switch ($rota) {
             redirecionar('login');
         }
         render('auth/inicio', ['titulo' => 'Início']);
+        break;
+
+    case 'bolsas':                                               // NOVO
+        $bolsa->lista();
+        break;
+
+    case 'bolsa':                                                // NOVO
+        $bolsa->detalhe();
         break;
 
     default:

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main>
+<main class="<?= !empty($largo) ? 'largo' : '' ?>">
     <?php if (isset($ficheiroView)) require $ficheiroView; ?>
 </main>
 

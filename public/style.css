@@ -76,3 +76,23 @@ a {
     color: #17675d;
     font-weight: 600;
 }
+
+main {
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 26px;
+}
+
+th, td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #d7e1dc;
+    text-align: left;
+}
+
+th {
+    color: #173f3a;
+}

@@ -16,9 +16,9 @@ class Auth
     public static function iniciarLogin($utilizador)
     {
         session_regenerate_id(true);
-        $_SESSION['user_id']  = $utilizador['id'];
+        $_SESSION['user_id'] = $utilizador['id'];
         $_SESSION['username'] = $utilizador['username'];
-        $_SESSION['perfil']   = $utilizador['perfil'];
+        $_SESSION['perfil'] = $utilizador['perfil'];
     }
 
     public static function terminarSessao()
